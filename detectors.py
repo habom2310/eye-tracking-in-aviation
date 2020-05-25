@@ -76,6 +76,8 @@ def blink_detection(x, y, time, missing=0.0, minlen=10):
 	diff = numpy.diff(miss)
 	starts = numpy.where(diff==1)[0] + 1
 	ends = numpy.where(diff==-1)[0] + 1
+	if len(ends) == 0 or len(starts) == 0: # no blink
+		return [],[]
     
 	if starts[0] > ends[0]: #data start with NaN value
 		starts = numpy.insert(starts,0,0)
@@ -143,11 +145,12 @@ def fixation_detection(x, y, time, missing=0.0, maxdist=25, mindur=50):
 	
 	# loop through all coordinates
 	si = 0
+	fix_arr = []
 	fixstart = False
 	for i in range(1,len(x)):
 		# calculate Euclidean distance from the current fixation coordinate
 		# to the next coordinate
-		squared_distance = ((x[si]-x[i])**2 + (y[si]-y[i])**2)
+		squared_distance = ((x[i-1]-x[i])**2 + (y[i-1]-y[i])**2)
 		dist = 0.0
 		if squared_distance > 0:
 			dist = squared_distance**0.5
@@ -157,21 +160,22 @@ def fixation_detection(x, y, time, missing=0.0, maxdist=25, mindur=50):
 			si = 0 + i
 			fixstart = True
 			Sfix.append([time[i]])
-		elif dist > maxdist and fixstart:
+		elif dist > maxdist and fixstart:       
 			# end the current fixation
 			fixstart = False
 			# only store the fixation if the duration is ok
 			if time[i-1]-Sfix[-1][0] >= mindur:
-				Efix.append([Sfix[-1][0], time[i-1], time[i-1]-Sfix[-1][0], x[si], y[si]])
+				Efix.append([Sfix[-1][0], time[i-1], time[i-1]-Sfix[-1][0], numpy.mean(x[si:i]), numpy.mean(y[si:i])])
 			# delete the last fixation start if it was too short
 			else:
 				Sfix.pop(-1)
-			si = 0 + i
-		elif not fixstart:
-			si += 1
+# 			si = 0 + i
+# 		elif not fixstart:
+# 			si += 1
 	#add last fixation end (we can lose it if dist > maxdist is false for the last point)
 	if len(Sfix) > len(Efix):
-		Efix.append([Sfix[-1][0], time[len(x)-1], time[len(x)-1]-Sfix[-1][0], x[si], y[si]])
+		if ((time[len(x)-1]-Sfix[-1][0]) > mindur):       
+			Efix.append([Sfix[-1][0], time[len(x)-1], time[len(x)-1]-Sfix[-1][0], x[i], y[i]])
 	return Sfix, Efix
 
 
