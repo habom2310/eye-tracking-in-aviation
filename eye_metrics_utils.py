@@ -67,7 +67,7 @@ def detect_blinks(df_data, missing = 0.0, min_dur = 3, x_col = "X Pos", y_col = 
     if starts[0] > ends[0]: #data starts with blink
         starts = np.insert(starts,0,0)
     if starts[-1] > ends[-1]: #data ends with blink
-        ends = np.append(ends, len(x) - 1)
+        ends = np.append(ends, len(time) - 1)
 
     Eblk = []
     # compile starts and ends
