@@ -2,9 +2,7 @@ import pandas as pd
 import numpy as np
 
 def check_percentage_null(df_data):
-    df_x = df_data.copy()
-    df_x.fillna(0, inplace=True)
-    return len(df_x[df_x["X Pos"] != 0])/len(df_x)
+    return len(df_data[df_data["Display"] == -1])/len(df_data)
 
 def data_slicing(df_data, window_length = 1200, stride = 300, min_length = 600):
     L = len(df_data)

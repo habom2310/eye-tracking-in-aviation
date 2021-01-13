@@ -12,8 +12,24 @@ def cal_dist(df_data, x_col = "X Pos", y_col = "Y Pos"):
 
     return df_data
 
-def detect_fixations(df_data, max_dist = 5, min_dur = 5, x_col = "X Pos", y_col = "Y Pos", time_col = "Start Time (secs)"):
+def consecutive(data, stepsize=1):
+    return np.split(data, np.where(np.diff(data) != stepsize)[0]+1)
+
+def cleanup(df_data, x_col = "X Pos", y_col = "Y Pos"):
     df_x = df_data.copy()
+    dif = np.abs(df_x["Display"].diff())
+    for arr in consecutive(np.where(dif!=0)[0]):
+        if len(arr) == 1:
+            continue
+        else:
+            df_x.drop(df_x[(df_x.index >= arr[0]) & (df_x.index <=arr[-1]) & (df_x["Display"] == -1)].index, inplace=True)
+    
+    return df_x.reset_index()
+
+def detect_fixations(df_data, max_dist = 5, min_dur = 5, x_col = "X Pos", y_col = "Y Pos", time_col = "Start Time (secs)", is_cleanup = True):
+    df_x = df_data.copy()
+    if is_cleanup == True:
+        df_x = cleanup(df_x)
     df_x = cal_dist(df_x)
     time = df_x[time_col].values
     x = df_x[x_col].values
@@ -55,6 +71,7 @@ def detect_fixations(df_data, max_dist = 5, min_dur = 5, x_col = "X Pos", y_col 
 
 def detect_blinks(df_data, missing = 0.0, min_dur = 3, x_col = "X Pos", y_col = "Y Pos", time_col = "Start Time (secs)"):
     df_x = df_data.copy()
+    df_x = cleanup(df_x)
     time = df_x[time_col].values
     df_x.fillna(0.0, inplace=True)
     condition = np.array(df_x.iloc[:-1][x_col].values == missing, dtype = int)
@@ -135,6 +152,7 @@ def detect_saccades(df_data, min_dist = 10, min_dur = 3, x_col = "X Pos", y_col 
 
 def detect_microsaccades(df_data, min_dist = 5, max_dist = 10, min_dur = 1, x_col = "X Pos", y_col = "Y Pos", time_col = "Start Time (secs)"):
     df_x = df_data.copy()
+    df_x = cleanup(df_x)
     df_x = cal_dist(df_x)
     time = df_x[time_col].values
     x = df_x[x_col].values
