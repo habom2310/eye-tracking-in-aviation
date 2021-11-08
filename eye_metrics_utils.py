@@ -62,12 +62,13 @@ def detect_fixations(df_data, max_dist = 5, min_dur = 5, x_col = "X Pos", y_col 
         # the minimal duration
         if e-s >= min_dur:
             meanx = np.mean(x[s:e])
+
             meany = np.mean(y[s:e])
 
             # add ending time
             Efix.append([time[s], time[e], time[e]-time[s], meanx, meany])
     
-    return Efix
+    return pd.DataFrame(Efix, columns=["start", "end", "duration", "x", "y"])
 
 def detect_blinks(df_data, missing = 0.0, min_dur = 3, x_col = "X Pos", y_col = "Y Pos", time_col = "Start Time (secs)"):
     df_x = df_data.copy()
@@ -104,7 +105,7 @@ def detect_blinks(df_data, missing = 0.0, min_dur = 3, x_col = "X Pos", y_col = 
             # add ending time
             Eblk.append([time[s], time[e], time[e]-time[s]])
     
-    return Eblk
+    return pd.DataFrame(Eblk, columns=["start", "end", "duration"])
 
 def detect_saccades(df_data, min_dist = 10, min_dur = 3, x_col = "X Pos", y_col = "Y Pos", time_col = "Start Time (secs)"):
     df_x = df_data.copy()
@@ -147,7 +148,7 @@ def detect_saccades(df_data, min_dist = 10, min_dur = 3, x_col = "X Pos", y_col 
             # add ending time
             Esac.append([time[s], time[e], time[e]-time[s], max(vel), max(acc)])
     
-    return Esac
+    return pd.DataFrame(Esac, columns=["start", "end", "duration", "velocity", "acceleration"])
 
 
 def detect_microsaccades(df_data, min_dist = 5, max_dist = 10, min_dur = 1, x_col = "X Pos", y_col = "Y Pos", time_col = "Start Time (secs)"):

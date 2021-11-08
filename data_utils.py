@@ -1,6 +1,11 @@
 import pandas as pd
 import numpy as np
 
+def reset_time(df_data):
+    df_x = df_data.copy()
+    df_x["Start Time (secs)"] = df_x["Start Time (secs)"] - df_x["Start Time (secs)"][0]
+    return df_x
+    
 def check_percentage_null(df_data):
     return len(df_data[df_data["Display"] == -1])/len(df_data)
 
