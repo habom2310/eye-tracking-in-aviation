@@ -5,6 +5,8 @@ from tqdm import tqdm
 
 import roi_config
 import utils
+from mongo_connection import Mongo_connection
+
 
 label = roi_config.label
 roi_center = roi_config.roi_center
@@ -53,7 +55,7 @@ def decode_transitions(enc_transitions, list_labels):
         
     return dec_transitions
 
-def find_all(p, s):
+def find_all_subseq(p, s):
     '''Yields all the positions of
     the pattern p in the string s.'''
     i = s.find(p)
@@ -76,7 +78,7 @@ def find_index_of_most_subseq(enc_transitions, L):
     print("max 5 subseq:", max5)
     print("max_subseq:", max_subseq)
     print("max_subseq decode:", decode_transitions(max_subseq, L))
-    list_idx_max_subseq = list(find_all(max_subseq, enc_transitions))
+    list_idx_max_subseq = list(find_all_subseq(max_subseq, enc_transitions))
     
     return list_idx_max_subseq
 
@@ -96,3 +98,41 @@ def merge_2roi_to_1roi(df_fixation, list_idx):
             df_data = df_data.drop(idx + 1)
         
     return df_data.reset_index(drop=True)
+
+
+
+def pair_transition_analysis(pID, trial):
+    mongo = Mongo_connection()
+    mongo.connect()
+    document = mongo.find_one({"pID": pID, "trial":trial})
+    if document is None:
+        print("No document found in MongoDB. Check again pID or trial!")
+        return None
+
+    d_data = document["data"]
+    df_data = pd.DataFrame(d_data)
+    transitions = df_data["roi"]
+
+    level = 0
+    num_max_subseq = 100
+    list_df_transition_merged = []
+    list_transitions = []
+    df_transition_merged = df_data.copy()
+    list_df_transition_merged.append(df_transition_merged)
+
+    while num_max_subseq > 3:
+        print("level:",level)
+        enc_transitions, L = encode_transition(transitions)
+        print("enc_transitions:", enc_transitions)
+        list_idx_max_subseq = find_index_of_most_subseq(enc_transitions, L)
+        print(list_idx_max_subseq)
+        num_max_subseq = len(list_idx_max_subseq)
+        print("num_max_subseq:",num_max_subseq)
+        df_transition_merged = merge_2roi_to_1roi(df_transition_merged, list_idx_max_subseq)
+        list_df_transition_merged.append(df_transition_merged)
+        transitions = df_transition_merged["roi"]
+        list_transitions.append(transitions)
+        level += 1
+        print("------------------------------------------------------------")
+
+pair_transition_analysis("001", 4)

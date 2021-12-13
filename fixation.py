@@ -103,7 +103,7 @@ def dist_func(point, v1, v2, type="c"): #between points and rectange/cirle
     """
     point: x, y
     v1,v2: topleft,bottomright if type = "r"
-    v1,v2: center (x,y),  if type = "c"
+    v1,v2: center (x,y), diameter if type = "c"
     """    
     d = 0
     if type == "r":

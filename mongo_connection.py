@@ -15,11 +15,12 @@ class Mongo_connection():
         
         self.db = self.client['eye_tracking_db']
         self.collection = self.db['fixation_sequences']
-        print("[INFO] Created a mongodb instance")
+        print("[INFO] Created a mongodb instance.")
 
     def connect(self):
         x = self.collection.count()
-        print("[INFO] mongodb connected. Found {} documents".format(x))
+        print("[INFO] Currently connected to eye_tracking_db/fixation_sequences.")
+        print("[INFO] Found {} documents.".format(x))
 
     def insert(self, document):
         x = self.collection.insert_one(document)
