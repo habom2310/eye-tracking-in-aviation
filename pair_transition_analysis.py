@@ -100,7 +100,6 @@ def merge_2roi_to_1roi(df_fixation, list_idx):
     return df_data.reset_index(drop=True)
 
 
-
 def pair_transition_analysis(pID, trial):
     mongo = Mongo_connection()
     mongo.connect()
@@ -135,4 +134,4 @@ def pair_transition_analysis(pID, trial):
         level += 1
         print("------------------------------------------------------------")
 
-pair_transition_analysis("001", 4)
+# pair_transition_analysis("011", 1)
