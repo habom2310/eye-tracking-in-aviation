@@ -3,7 +3,7 @@ import pandas as pd
 import itertools
 from statsmodels.tsa.stattools import grangercausalitytests, adfuller, kpss
 
-def construct_signal(start, end, signal_end, sr = 1000, signal_type = "rect"):
+def construct_signal(start, end, signal_end, sr, signal_type = "rect"):
     signal = np.zeros(int(signal_end*sr), dtype=int)
 
     if signal_type == "rect":
@@ -43,6 +43,7 @@ def adf_test(time_series):
         print('\t%s: %.3f' % (key, value))
     return result
 
+
 def kpss_test(time_series):
     '''
     testing a null hypothesis that an observable time series is stationary 
@@ -58,16 +59,49 @@ def kpss_test(time_series):
         print(f'   {key} : {value}')
     return result
 
+def run_adf_kpss_test(signals_from_transitions):
+    lroi = []
+    lstat = []
+    lpval = []
+    lnlag = []
+    lcritval = []
+    ltesttype = []
 
-def granger_causality_test(signals_from_transitions):
+    for k, v in signals_from_transitions.items():
+        signal = v
+        adf_result = adfuller(signal)
+        lroi.append(k)
+        ltesttype.append("adf")
+        lstat.append(adf_result[0])
+        lpval.append(round(adf_result[1],3))
+        lnlag.append(adf_result[2])
+        lcritval.append(adf_result[4])
+
+        kpss_result = kpss(signal, nlags="auto")
+        lroi.append(k)
+        ltesttype.append("kpss")
+        lstat.append(kpss_result[0])
+        lpval.append(round(kpss_result[1],3))
+        lnlag.append(kpss_result[2])
+        lcritval.append(kpss_result[3])
+    
+    df_test = pd.DataFrame({"roi": lroi,
+                            "test_type": ltesttype,
+                            "stat_val": lstat,
+                            "pval": lpval,
+                            "nlag": lnlag,
+                            "crit_val": lcritval})
+
+    return df_test
+
+def granger_causality_test(signals_from_transitions, maxlag = 10):
     rois = list(signals_from_transitions.keys())
     list_perm = list(itertools.permutations(rois, 2))
 
     df_granger = pd.DataFrame(columns = ["roi1", "roi2", "lag", "pval"])
-
+    # maxlag = maxlag
     for perm in list_perm:
         data = pd.DataFrame(signals_from_transitions)[list(perm)]
-        maxlag = 4
         x = grangercausalitytests(data, maxlag=maxlag, verbose=False)
         lroi1 = [perm[0]] * maxlag
         lroi2 = [perm[1]] * maxlag
