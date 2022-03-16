@@ -109,18 +109,18 @@ def entropy(X, max_dist=20, min_samples=3, cluster_method="DBSCAN"):
     return Hs, Ht
 
 
-import eye_metrics_utils
-import data_utils
-import warnings
-# warnings.filterwarnings(action='once')
-warnings.filterwarnings('ignore')
-if __name__ == "__main__":
-    csv_file = "data/PISSS_ID_003_Approach Two Gaze-Vergence.csv"
-    df_data = pd.read_csv(csv_file)
+# import eye_metrics_utils
+# import data_utils
+# import warnings
+# # warnings.filterwarnings(action='once')
+# warnings.filterwarnings('ignore')
+# if __name__ == "__main__":
+#     csv_file = "data/PISSS_ID_003_Approach Two Gaze-Vergence.csv"
+#     df_data = pd.read_csv(csv_file)
 
-    for v in data_utils.data_slicing(df_data.copy()):
-        Efix = eye_metrics_utils.detect_fixations(v)
-        print(Efix)
-        X = np.array(Efix).T[3:].T
-        Hs, Ht = entropy(X)
-        print(Hs, Ht)
+#     for v in data_utils.data_slicing(df_data.copy()):
+#         Efix = eye_metrics_utils.detect_fixations(v)
+#         print(Efix)
+#         X = np.array(Efix).T[3:].T
+#         Hs, Ht = entropy(X)
+#         print(Hs, Ht)

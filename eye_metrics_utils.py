@@ -200,8 +200,8 @@ def detect_microsaccades(df_data, min_dist = 5, max_dist = 10, min_dur = 1, x_co
     
     return Emsac
 
-if __name__ == "__main__":
-    csv_file = "data/PISSS_ID_003_Approach Two Gaze-Vergence.csv"
-    df_data = pd.read_csv(csv_file)
-    Emsac = detect_microsaccades(df_data)
-    print(Emsac)
+# if __name__ == "__main__":
+#     csv_file = "data/PISSS_ID_003_Approach Two Gaze-Vergence.csv"
+#     df_data = pd.read_csv(csv_file)
+#     Emsac = detect_microsaccades(df_data)
+#     print(Emsac)

@@ -38,20 +38,34 @@ def encode_transition(transitions, label_type = "random"):
     """
     assign a random letter for each roi
     """
-    letters = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-    L = list(set(transitions))
-    print(L)
     enc_transitions = ""
-    for roi in transitions:
-        enc_transitions += letters[L.index(roi)]
-        
-    return enc_transitions, L
+    if label_type == "random":
+        letters = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+        L = list(set(transitions))
+        encoding_table = {letters[i]:L[i] for i in range(len(L))}
+    #     print(L)
+        for roi in transitions:
+            enc_transitions += letters[L.index(roi)]
+            
+    elif label_type == "fix":
+        encoding_table = encode_table
+        for v in transitions:
+            enc_transitions = enc_transitions + encode_table[v]
+   
+    return enc_transitions, encoding_table
 
-def decode_transitions(enc_transitions, list_labels):
-    letters = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+def decode(str_transition):
+    lst_transition = []
+    for v in str_transition:
+        key_index = list(encode_table.values()).index(v)
+        lst_transition.append(list(encode_table.keys())[key_index])
+    return lst_transition
+
+def decode_transitions(enc_transitions, encoding_table):
     dec_transitions = []
-    for enc_t in enc_transitions:
-        dec_transitions.append(list_labels[letters.index(enc_t)])
+    for roi in enc_transitions:
+        dec_transitions.append(encoding_table[roi])
         
     return dec_transitions
 
