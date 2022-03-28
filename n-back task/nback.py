@@ -1,16 +1,12 @@
 import sounddevice as sd
 import librosa
-import soundfile as sf
-import io
 import numpy as np
 import glob
 import datetime
+import os
 
-
-file_paths = glob.glob("n-back task/sound_samples/*.wav")
-print(file_paths)
+file_paths = glob.glob(os.path.join(os.path.dirname(__file__),'sound_samples/*.wav'))
 # ["one.wav", "two.wav", "three.wav", "four.wav", "five.wav", "six.wav", "seven.wav", "eight.wav", "nine.wav"]
-print(file_paths)
 
 class Nback():
     def __init__(self, time_between_each_number = 1.5):
