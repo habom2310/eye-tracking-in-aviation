@@ -4,6 +4,7 @@ import numpy as np
 import glob
 import datetime
 import os
+from threading import Thread
 
 file_paths = glob.glob(os.path.join(os.path.dirname(__file__),'sound_samples/*.wav'))
 # ["one.wav", "two.wav", "three.wav", "four.wav", "five.wav", "six.wav", "seven.wav", "eight.wav", "nine.wav"]
@@ -42,6 +43,15 @@ class Nback():
         except:
             print("Error")
             return None
+
+class soundThread(Thread):
+    def __init__(self, index):
+        super().__init__()
+        self.index = index
+
+    def run(self):
+        nback = Nback()
+        nback.play_sound(self.index)
 
 # if __name__=="__main__":
 #     nback = Nback()

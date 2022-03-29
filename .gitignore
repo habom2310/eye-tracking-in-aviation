@@ -1,3 +1,4 @@
 .vscode/
 .ipynb_checkpoints/
 length*.csv
+n-back task/data/*.csv
