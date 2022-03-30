@@ -21,10 +21,40 @@ print(_joystick.get_id())
 print(_joystick.get_name())
 clock = pygame.time.Clock()
 
+# logging variables settings
+data = []
+
+
+# pynput settings
+from pynput import keyboard
+from pynput.keyboard import Key, Controller
+keyboard_controller = Controller()
+
+def on_press(key):
+    try: k = key.char # single-char keys
+    except: k = key.name # other keys
+    if 'char' in dir(key):     
+        if key.char == 'q':
+            timestamp = round(time.time() * 1000)
+            datapoint = {"event": "pressed", "time": timestamp}
+            try: 
+                screen.fill(green)
+            except:
+                pass
+            print(datapoint)
+            data.append(datapoint)
+            print("q pressed")
+
+lis = keyboard.Listener(on_press=on_press)
+lis.start() # start to listen on a separate thread
+# lis.join() # no this if main thread is polling self.keys
+
 # background
 white = (255, 255, 255)
 # text color
 black = (0, 0, 0)
+#green
+green = (0, 255, 0)
 # light shade of the button
 color_light = (200,200,200)  
 # dark shade of the button
@@ -111,7 +141,6 @@ current_index = 0
 number_sequence = []
 is_btnSet1_selected = False
 is_btnSet2_selected = False
-data = []
 while not done:
     screen.fill(white)
 
@@ -152,6 +181,7 @@ while not done:
             if _joystick.get_button(0) == 1 and is_running == True: # only button 1 is accepted
                 timestamp = round(time.time() * 1000)
                 datapoint = {"event": "pressed", "time": timestamp}
+                screen.fill(green)
                 print(datapoint)
                 data.append(datapoint)
 
