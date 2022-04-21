@@ -62,6 +62,7 @@ def get_dwell_stat(df_data):
     agg_sum = df_data.groupby(["roi"]).agg({'duration': 'sum'})
     agg_sum_percent = agg_sum/sum(agg_sum['duration'])
     agg_mean = df_data.groupby(["roi"]).agg({'duration': 'mean'})
+    agg_var = df_data.groupby(["roi"]).agg({'duration': 'var'})
     agg_fixrate = df_data.groupby(["roi"]).agg({'duration': 'count'})/df_data.iloc[-1]["end"]*1000/60
     
     list_roi = list(set(df_data["roi"]))
@@ -70,6 +71,7 @@ def get_dwell_stat(df_data):
         d["duration_{}".format(roi)] = agg_sum.loc[roi][0]
         d["duration_percentage_{}".format(roi)] = agg_sum_percent.loc[roi][0]
         d["duration_average_{}".format(roi)] = agg_mean.loc[roi][0]
+        d["duration_var_{}".format(roi)] = agg_var.loc[roi][0]
         d["fix_rate_{}".format(roi)] = agg_fixrate.loc[roi][0]
         
 #     df_data = fixation.merge_consecutive_fixations_in_same_roi(df_data)
@@ -86,8 +88,8 @@ def get_dwell_stat(df_data):
 
     return d
 
-def run_dwell_stats(trial=2):
-    documents = mongo.find({"trial":trial})
+def run_dwell_stats(cmd):
+    documents = mongo.find(cmd)
     d = defaultdict(list)
     for document in documents:
         print("trial: {}, group: {}, pID: {}".format(document["trial"], document["group"], document["pID"]))
@@ -97,6 +99,8 @@ def run_dwell_stats(trial=2):
         d['pID'].append(document["pID"])
         d['group'].append(document["group"])
         d['trial'].append(document["trial"])
+        d['rating'].append(document["rating"])
+        
         
         d["null_percent"].append(document["null_percent"])
     #     d["calibration"].append(document["calibration"])
@@ -113,11 +117,11 @@ def run_dwell_stats(trial=2):
     #     for k in d_dwell.keys():
     #         if "between_runway" in str(k):
     #             d[k].append(d_dwell.get(k, 0))
-    df_dwell = pd.DataFrame(d).sort_values(["trial", "group","pID"]).dropna().reset_index().drop(columns=["index"])
+    df_dwell = pd.DataFrame(d).sort_values(["pID","trial", "group","rating"]).dropna().reset_index().drop(columns=["index"])
     return df_dwell
 
-def run_basic_metrics(trial=2):
-    documents = mongo.find({"trial":trial})
+def run_basic_metrics(cmd):
+    documents = mongo.find(cmd)
     d = defaultdict(list)
     for document in documents:
         print("trial: {}, group: {}, pID: {}".format(document["trial"], document["group"], document["pID"]))
@@ -176,6 +180,6 @@ def run_basic_metrics(trial=2):
     #         d["mean_repetition_{}".format(ngram_length)].append(np.mean(list(more_than_2_time_seq.values())))
 
 
-    df_res = pd.DataFrame(d).sort_values(["trial", "group","pID"]).dropna().reset_index().drop(columns=["index"])
+    df_res = pd.DataFrame(d).sort_values(["pID","trial", "group","rating"]).dropna().reset_index().drop(columns=["index"])
     return df_res
     

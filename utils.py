@@ -2,13 +2,20 @@ import roi_config
 import cv2
 from collections import defaultdict
 import numpy as np
+from datetime import datetime
+from airtable import config, airtable
+
+table = airtable.AirTableClient(
+    config.config['airtable']['api_key'],
+    config.config['airtable']['base_id'],
+    config.config['airtable']['table']
+)
 
 encode_table = roi_config.encode_table
 label = roi_config.label
 
 def distance(x, y):
     return ((x[0]-y[0])**2 + (x[1] - y[1])**2)**0.5
-
 
 def encode(lst_transition):
     str_transition = ""
@@ -41,3 +48,13 @@ def get_pdict(label = label):
             pdict[key] = points
 
     return pdict
+
+def log_to_airtable(res):
+    now = datetime.now()
+    
+    result = res
+    result['Time'] = now.strftime('%H:%M:%S %d-%m-%Y')
+
+    table.add_row(result)
+    
+    print(result)

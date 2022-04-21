@@ -10,6 +10,58 @@ def cohend_ES(x, y):
     dof = nx + ny - 2
     return abs((np.mean(x) - np.mean(y)) / np.sqrt(((nx-1)*np.std(x, ddof=1) ** 2 + (ny-1)*np.std(y, ddof=1) ** 2) / dof))
 
+def hypothesis_test(list_df, test="t", es_func = "cohen"):
+    print(f"Found {len(list_df)} groups")
+    cols = list(list_df[0].columns)
+    
+    for i, df in enumerate(list_df):
+        print(f"Number of samples in group {i}:{len(df)}")
+        
+    test_function = anova.FPvalue
+    if test == "anova":
+        test_function = anova.FPvalue
+    elif test == "t":
+        test_function = scipy.stats.ttest_ind
+        
+    if es_func == "eta":
+        ES_function = anova.EffectSize
+    elif es_func == "cohen":
+        ES_function = cohend_ES
+        
+    ll = []
+    lpl = []
+    test_val = []
+    p_val = []
+    ES = []
+    for col in cols:
+        data = [df.loc[:,col].values for df in list_df]
+        data = [a[a != 0] for a in data]
+        print(f"{col}: group 1: {len(data[0])}, group 2: {len(data[1])}")
+        
+        #levene's test
+        l, pl = scipy.stats.levene(*data)
+        ll.append(l)
+        lpl.append(pl)
+        
+        test_result = test_function(*data)
+        f = test_result[0]
+        p = test_result[1]
+        
+        e = ES_function(*data)
+        
+        test_val.append(f)
+        p_val.append(p)
+        ES.append(e)
+    
+    print("test: {}, effect size: {}".format(test, es_func))
+    return pd.DataFrame({"ROI": cols,
+                        "levene: l-value": ll,
+                        "levene: p-value": lpl,
+                        f"{test}: t-value": test_val,
+                        f"{test}: p-value": p_val,
+                        f"ES ({es_func})": ES})
+
+
 def hypothesis_test_group(df_features, trial = 1, test="t", es_func = "cohen"):
     exclude_cols = ["index", "pID", "group", "trial", "null_percent"]
     cols = [c for c in list(df_features.columns) if c not in exclude_cols]
