@@ -5,8 +5,8 @@
 2,2C,220,1,Good,409,552,565,143,156,13,Right in the middle,straight,No,No,good flare,Good,1
 2,2C,220,2,Good,629,777,791,148,162,14,Slightly left,straight,Slight,No,good flare,Good,1
 2,2C,220,3,,840,969,1005,129,165,36,Go around,,,,,,
-3,1A,42,1,Medium,533,675,689,142,156,14,1 window off to the right,straight,No,No,"high ALT, No flare (transition) phase",Good,0
-3,1A,42,2,Medium,780,923,940,143,160,17,1/2 window off to the left,straight,No,No,"high ALT, No flare phase",Good,0
+3,1A,42,1,Medium,533,675,689,142,156,14,1 window off to the right,straight,No,No,"high ALT, No flare (transition) phase",Bad,0
+3,1A,42,2,Medium,780,923,940,143,160,17,1/2 window off to the left,straight,No,No,"high ALT, No flare phase",Bad,0
 3,1A,42,3,,1015,1140,1178,125,163,38,Go around,,,,,,
 4,1A,35,1,Medium,523,666,681,143,158,15,1 window off to the right,right,No,No,,Bad,0
 4,1A,35,2,Medium,740,891,908,151,168,17,2 window off to the right,straight,No,No,,Bad,0
@@ -15,7 +15,7 @@
 5,2C,180,2,Good,647,791,805,144,158,14,slightly left,straight,Slight,No,good flare,Good,1
 5,2C,180,3,,850,969,1005,119,155,36,Go around,,,,,,
 6,2B,90,1,Good,460,612,625,152,165,13,middle,straight,No,No,,Good,1
-6,2B,90,2,Bad,747,895,910,148,163,15,1/2 window off to the right,left,big,yes,not level at touching point,Bad,1
+6,2B,90,2,Bad,747,895,910,148,163,15,1/2 window off to the right,left,big,yes,not level at touching point,Bad,0
 6,2B,90,3,,978,1115,1191,137,213,76,Go around,,,,,,
 7,1A,49,1,Bad,441,588,602,147,161,14,middle,big left making left shift after touch down (2 window),big correction,No,not level at touching point,Bad,0
 7,1A,49,2,Medium,658,806,819,148,161,13,1 window off to the right,slightly left,big correction,No,not level at touching point,Bad,0
