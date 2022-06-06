@@ -17,7 +17,7 @@ label = {"runway": [(0,0), (1280, 350), "r"],
 }
 
 encode_table = {
-    "rpmleft": "S",
+    "rpmleft": "R",
 #     "nrst": "Q",
 #     "RPM_RIGHT": "R",
     "asi": "S",
